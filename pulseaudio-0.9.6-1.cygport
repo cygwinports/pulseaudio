@@ -1,0 +1,5 @@
+DESCRIPTION="PulseAudio sound server"
+HOMEPAGE="http://www.pulseaudio.org/"
+SRC_URI="http://0pointer.de/lennart/projects/${PN}/${P}.tar.gz"
+
+CYGCONF_ARGS="--disable-static --disable-rpath --disable-alsa --disable-solaris"
