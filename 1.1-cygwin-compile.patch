@@ -1,0 +1,71 @@
+--- origsrc/pulseaudio-1.1/src/daemon/daemon-conf.c	2011-10-20 07:54:16.000000000 -0500
++++ src/pulseaudio-1.1/src/daemon/daemon-conf.c	2011-11-20 14:59:40.601775700 -0600
+@@ -470,7 +470,7 @@ static int parse_nice_level(const char *
+ }
+ 
+ static int parse_rtprio(const char *filename, unsigned line, const char *section, const char *lvalue, const char *rvalue, void *data, void *userdata) {
+-#ifdef OS_IS_WIN32
++#ifdef HAVE_WAVEOUT
+     pa_log("[%s:%u] Realtime priority not available on win32.", filename, line);
+ #else
+ # ifdef HAVE_SCHED_H
+--- origsrc/pulseaudio-1.1/src/daemon/dumpmodules.c	2011-10-20 07:54:16.000000000 -0500
++++ src/pulseaudio-1.1/src/daemon/dumpmodules.c	2011-11-20 14:59:40.603775800 -0600
+@@ -89,7 +89,7 @@ static void show_info(const char *name,
+     }
+ }
+ 
+-#ifndef OS_IS_WIN32
++#ifndef HAVE_WAVEOUT
+ extern const lt_dlsymlist lt_preloaded_symbols[];
+ #endif
+ 
+--- origsrc/pulseaudio-1.1/src/daemon/main.c	2011-10-20 07:54:16.000000000 -0500
++++ src/pulseaudio-1.1/src/daemon/main.c	2011-11-20 14:59:40.606776000 -0600
+@@ -993,7 +993,7 @@ int main(int argc, char *argv[]) {
+         pa_log_info(_("Dude, your kernel stinks! The chef's recommendation today is Linux with high-resolution timers enabled!"));
+ 
+     if (conf->lock_memory) {
+-#ifdef HAVE_SYS_MMAN_H
++#ifdef MCL_FUTURE
+         if (mlockall(MCL_FUTURE) < 0)
+             pa_log_warn("mlockall() failed: %s", pa_cstrerror(errno));
+         else
+--- origsrc/pulseaudio-1.1/src/pulse/context.c	2011-10-20 07:54:16.000000000 -0500
++++ src/pulseaudio-1.1/src/pulse/context.c	2011-11-20 14:59:40.612776400 -0600
+@@ -660,7 +660,11 @@ static int context_autospawn(pa_context
+         goto fail;
+     }
+ 
++#ifdef SA_NOCLDWAIT
+     if ((sa.sa_flags & SA_NOCLDWAIT) || sa.sa_handler == SIG_IGN) {
++#else
++    if (sa.sa_handler == SIG_IGN) {
++#endif
+         pa_log_debug("Process disabled waitpid(), cannot autospawn.");
+         pa_context_fail(c, PA_ERR_CONNECTIONREFUSED);
+         goto fail;
+--- origsrc/pulseaudio-1.1/src/pulsecore/macro.h	2011-10-20 07:54:17.000000000 -0500
++++ src/pulseaudio-1.1/src/pulsecore/macro.h	2011-11-20 14:59:40.614776500 -0600
+@@ -50,7 +50,7 @@
+ #elif defined(PAGESIZE)
+ #define PA_PAGE_SIZE ((size_t) PAGESIZE)
+ #elif defined(HAVE_SYSCONF)
+-#define PA_PAGE_SIZE ((size_t) (sysconf(_SC_PAGE_SIZE)))
++#define PA_PAGE_SIZE ((size_t) (sysconf(_SC_PAGESIZE)))
+ #else
+ /* Let's hope it's like x86. */
+ #define PA_PAGE_SIZE ((size_t) 4096)
+--- origsrc/pulseaudio-1.1/src/tests/once-test.c	2011-10-20 07:54:17.000000000 -0500
++++ src/pulseaudio-1.1/src/tests/once-test.c	2011-11-20 14:59:40.616776600 -0600
+@@ -25,6 +25,10 @@
+ #include <pthread.h>
+ #endif
+ 
++#ifndef _POSIX_BARRIERS
++#undef HAVE_PTHREAD
++#endif
++
+ #include <pulsecore/thread.h>
+ #include <pulsecore/once.h>
+ #include <pulsecore/log.h>

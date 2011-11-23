@@ -1,0 +1,43 @@
+--- origsrc/pulseaudio-1.1/src/modules/module-detect.c	2011-10-20 07:54:16.000000000 -0500
++++ src/pulseaudio-1.1/src/modules/module-detect.c	2011-11-21 20:15:17.070453900 -0600
+@@ -48,7 +48,9 @@ PA_MODULE_DESCRIPTION("Detect available
+ PA_MODULE_VERSION(PACKAGE_VERSION);
+ PA_MODULE_LOAD_ONCE(TRUE);
+ PA_MODULE_USAGE("just-one=<boolean>");
++#ifdef HAVE_UDEV
+ PA_MODULE_DEPRECATED("Please use module-udev-detect instead of module-detect!");
++#endif
+ 
+ static const char* const valid_modargs[] = {
+     "just-one",
+@@ -205,7 +207,7 @@ static int detect_solaris(pa_core *c, in
+ }
+ #endif
+ 
+-#ifdef OS_IS_WIN32
++#ifdef HAVE_WAVEOUT
+ static int detect_waveout(pa_core *c, int just_one) {
+     /*
+      * FIXME: No point in enumerating devices until the plugin supports
+@@ -244,7 +246,7 @@ int pa__init(pa_module*m) {
+ #ifdef HAVE_SOLARIS
+     if ((n = detect_solaris(m->core, just_one)) <= 0)
+ #endif
+-#ifdef OS_IS_WIN32
++#ifdef HAVE_WAVEOUT
+     if ((n = detect_waveout(m->core, just_one)) <= 0)
+ #endif
+     {
+--- origsrc/pulseaudio-1.1/src/modules/module-waveout.c	2011-10-20 07:54:16.000000000 -0500
++++ src/pulseaudio-1.1/src/modules/module-waveout.c	2011-11-20 14:59:40.610776200 -0600
+@@ -27,6 +27,10 @@
+ #include <windows.h>
+ #include <mmsystem.h>
+ 
++#ifdef __CYGWIN__
++#define _stricmp strcasecmp
++#endif
++
+ #include <pulse/xmalloc.h>
+ #include <pulse/timeval.h>
+ 

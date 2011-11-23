@@ -1,0 +1,19 @@
+--- origsrc/pulseaudio-1.1/src/Makefile.am	2011-10-20 07:54:16.000000000 -0500
++++ src/pulseaudio-1.1/src/Makefile.am	2011-11-22 03:20:45.254582500 -0600
+@@ -52,14 +52,14 @@ SERVER_CFLAGS = -D__INCLUDED_FROM_PULSE_
+ 
+ AM_LIBADD = $(PTHREAD_LIBS) $(INTLLIBS)
+ AM_LDADD = $(PTHREAD_LIBS) $(INTLLIBS)
+-AM_LDFLAGS = $(NODELETE_LDFLAGS)
++AM_LDFLAGS = $(NODELETE_LDFLAGS) -no-undefined
+ 
+ if STATIC_BINS
+ BINLDFLAGS = -static
+ endif
+ 
+ if OS_IS_WIN32
+-AM_LDFLAGS+=-Wl,--export-all-symbols,--enable-auto-import -no-undefined
++AM_LDFLAGS+=-Wl,--export-all-symbols,--enable-auto-import
+ WINSOCK_LIBS=-lwsock32 -lws2_32 -lwininet
+ endif
+ 

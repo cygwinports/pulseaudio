@@ -1,0 +1,15 @@
+--- origsrc/pulseaudio-1.1/src/Makefile.am	2011-10-20 07:54:16.000000000 -0500
++++ src/pulseaudio-1.1/src/Makefile.am	2011-11-22 03:20:45.254582500 -0600
+@@ -958,10 +958,12 @@ librtp_la_SOURCES = \
+ ###################################
+ 
+ if HAVE_DBUS
++if !HAVE_WAVEOUT
+ # Serveral module (e.g. libalsa-util.la)
+ modlibexec_LTLIBRARIES += \
+ 		module-console-kit.la
+ endif
++endif
+ 
+ modlibexec_LTLIBRARIES += \
+ 		module-cli.la \

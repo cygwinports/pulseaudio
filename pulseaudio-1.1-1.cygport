@@ -1,0 +1,49 @@
+DESCRIPTION="PulseAudio sound server"
+HOMEPAGE="http://www.pulseaudio.org/"
+SRC_URI="http://freedesktop.org/software/pulseaudio/releases/${P}.tar.xz"
+
+PATCH_URI="
+	1.1-libexecdir.patch
+	1.1-no-undefined.patch
+	1.1-soext.patch
+	1.1-cygwin-compile.patch
+	1.1-cygwin-mutex.patch
+	1.1-cygwin-no-consolekit.patch
+	1.1-cygwin-no-rtp.patch
+	1.1-cygwin-waveout.patch
+"
+
+PKG_NAMES="${PN} libpulse0 libpulse-mainloop-glib0 libpulse-simple0 libpulse-devel vala-libpulse"
+pulseaudio_CONTENTS="--exclude=cygpulse-*.dll --exclude=cygpulsecommon-*.dll
+                     --exclude=vala etc/ usr/bin/ usr/lib/pulse*/ usr/share/"
+libpulse0_CONTENTS="usr/bin/cygpulse-0.dll usr/bin/cygpulsecommon-*.dll"
+libpulse_mainloop_glib0_CONTENTS="usr/bin/cygpulse-mainloop-glib-0.dll"
+libpulse_simple0_CONTENTS="usr/bin/cygpulse-simple-0.dll"
+libpulse_devel_CONTENTS="usr/include/ usr/lib/cmake/ usr/lib/lib* usr/lib/pkgconfig/"
+vala_libpulse_CONTENTS="usr/share/vala/"
+
+CYGCONF_ARGS="
+	--libexecdir=/usr/lib
+	--disable-rpath
+	--disable-alsa
+	--disable-oss-output
+	--disable-oss-wrapper
+	--disable-solaris
+	ac_cv_header_windows_h=no
+	ac_cv_header_winsock2_h=no
+	ac_cv_header_ws2tcpip_h=no
+"
+
+src_install() {
+	cd ${B}
+	cyginstall
+
+	dosym esdcompat /usr/bin/esd
+
+	# make install removes the .la files, so auto-fixups won't happen
+	mv ${D}/usr/lib/pulse*/bin/*.dll ${D}/usr/bin/
+	rm -f ${D}/usr/lib/pulse*/modules/*.a
+	rm -f ${D}/usr/lib/*.la
+
+	make_etc_defaults /etc/pulse
+}

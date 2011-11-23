@@ -1,0 +1,16 @@
+attr may already be initialized (how??), in which case Cygwin's
+pthread_mutexattr_init() returns EBUSY.  (POSIX says results are undefined
+in this case.)
+
+--- origsrc/pulseaudio-1.1/src/pulsecore/mutex-posix.c	2011-10-20 07:54:17.000000000 -0500
++++ src/pulseaudio-1.1/src/pulsecore/mutex-posix.c	2011-11-22 18:37:56.993448700 -0600
+@@ -44,7 +44,8 @@ pa_mutex* pa_mutex_new(pa_bool_t recursi
+     pthread_mutexattr_t attr;
+     int r;
+ 
+-    pa_assert_se(pthread_mutexattr_init(&attr) == 0);
++    pthread_mutexattr_init(&attr);
++    pa_assert_se(attr != NULL);
+ 
+     if (recursive)
+         pa_assert_se(pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE) == 0);
