@@ -1,9 +1,0 @@
-category: Audio
-requires: libavahi-client3 libavahi-common3 libdbus1_3 libfftw3_3 libgcc1 libgconf2_4 libgdbm4 libICE6 libintl8 libltdl7 liborc0.4_0 libpulse0 libsamplerate0 libSM6 libsndfile1 libspeex1 libX11_6 libX11-xcb1 libxcb1 libXtst6
-sdesc: "PulseAudio sound server"
-ldesc: "PulseAudio is a sound system for POSIX OSes, meaning that it is 
-a proxy for your sound applications. It allows you to do advanced 
-operations on your sound data as it passes between your application and 
-your hardware. Things like transferring the audio to a different 
-machine, changing the sample format or channel count and mixing several 
-sounds into one are easily achieved using a sound server."

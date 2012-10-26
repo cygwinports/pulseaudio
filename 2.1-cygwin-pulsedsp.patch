@@ -1,0 +1,76 @@
+--- origsrc/pulseaudio-2.1/src/Makefile.am	2012-10-25 19:49:10.232991900 -0500
++++ src/pulseaudio-2.1/src/Makefile.am	2012-10-25 20:36:45.268181500 -0500
+@@ -779,7 +779,7 @@ endif
+ libpulsedsp_la_SOURCES = utils/padsp.c
+ libpulsedsp_la_CFLAGS = $(AM_CFLAGS)
+ libpulsedsp_la_LIBADD = $(AM_LIBADD) libpulse.la libpulsecommon-@PA_MAJORMINOR@.la
+-libpulsedsp_la_LDFLAGS = $(AM_LDFLAGS) -avoid-version -disable-static
++libpulsedsp_la_LDFLAGS = $(AM_LDFLAGS) -module -avoid-version -no-undefined -disable-static
+ 
+ ###################################
+ #      Daemon core library        #
+--- origsrc/pulseaudio-2.1/src/utils/padsp.c	2012-10-25 19:49:10.236992200 -0500
++++ src/pulseaudio-2.1/src/utils/padsp.c	2012-10-25 20:55:24.035752800 -0500
+@@ -50,6 +50,11 @@
+ #include <linux/sockios.h>
+ #endif
+ 
++#ifdef __CYGWIN__
++#include <sys/cygwin.h>
++static void *RTLD_NEXT = NULL;
++#endif
++
+ #include <pulse/pulseaudio.h>
+ #include <pulse/gccmacro.h>
+ #include <pulsecore/llist.h>
+@@ -140,6 +145,10 @@ static int (*_access)(const char *, int)
+  * avoid warnings. */
+ typedef void (*fnptr)(void);
+ static inline fnptr dlsym_fn(void *handle, const char *symbol) {
++#ifdef __CYGWIN__
++    if (!RTLD_NEXT)
++        RTLD_NEXT = dlopen ("cygwin1.dll", RTLD_LAZY);
++#endif
+     return (fnptr) (long) dlsym(handle, symbol);
+ }
+ 
+@@ -2357,7 +2366,7 @@ fail:
+     return ret;
+ }
+ 
+-#ifdef sun
++#if defined(sun) || defined(__CYGWIN__)
+ int ioctl(int fd, int request, ...) {
+ #else
+ int ioctl(int fd, unsigned long request, ...) {
+@@ -2705,3 +2714,16 @@ int fclose(FILE *f) {
+     LOAD_FCLOSE_FUNC();
+     return _fclose(f);
+ }
++
++#ifdef __CYGWIN__
++__attribute__((constructor))
++void _init (void) {
++  cygwin_internal (CW_HOOK, "_open64", open);
++  cygwin_internal (CW_HOOK, "ioctl", ioctl);
++  cygwin_internal (CW_HOOK, "close", close);
++  cygwin_internal (CW_HOOK, "access", access);
++  cygwin_internal (CW_HOOK, "_stat64", stat);
++  cygwin_internal (CW_HOOK, "_fopen64", fopen);
++  cygwin_internal (CW_HOOK, "fclose", fclose);
++}
++#endif
+--- origsrc/pulseaudio-2.1/src/utils/padsp.in	2012-10-25 19:49:10.238992300 -0500
++++ src/pulseaudio-2.1/src/utils/padsp.in	2012-10-25 14:54:43.286901800 -0500
+@@ -76,9 +76,9 @@ done
+ shift $(( $OPTIND - 1 ))
+ 
+ if [ x"$LD_PRELOAD" = x ] ; then
+-   LD_PRELOAD="@pkglibdir@/libpulsedsp.so"
++   LD_PRELOAD="@pkglibdir@/cygpulsedsp.dll"
+ else
+-   LD_PRELOAD="$LD_PRELOAD @pkglibdir@/libpulsedsp.so"
++   LD_PRELOAD="$LD_PRELOAD @pkglibdir@/cygpulsedsp.dll"
+ fi
+ 
+ export LD_PRELOAD

@@ -31,20 +31,6 @@
          if (mlockall(MCL_FUTURE) < 0)
              pa_log_warn("mlockall() failed: %s", pa_cstrerror(errno));
          else
---- origsrc/pulseaudio-1.1/src/pulse/context.c	2011-10-20 07:54:16.000000000 -0500
-+++ src/pulseaudio-1.1/src/pulse/context.c	2011-11-20 14:59:40.612776400 -0600
-@@ -660,7 +660,11 @@ static int context_autospawn(pa_context
-         goto fail;
-     }
- 
-+#ifdef SA_NOCLDWAIT
-     if ((sa.sa_flags & SA_NOCLDWAIT) || sa.sa_handler == SIG_IGN) {
-+#else
-+    if (sa.sa_handler == SIG_IGN) {
-+#endif
-         pa_log_debug("Process disabled waitpid(), cannot autospawn.");
-         pa_context_fail(c, PA_ERR_CONNECTIONREFUSED);
-         goto fail;
 --- origsrc/pulseaudio-1.1/src/pulsecore/macro.h	2011-10-20 07:54:17.000000000 -0500
 +++ src/pulseaudio-1.1/src/pulsecore/macro.h	2011-11-20 14:59:40.614776500 -0600
 @@ -50,7 +50,7 @@

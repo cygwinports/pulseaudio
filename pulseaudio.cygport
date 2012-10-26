@@ -1,5 +1,15 @@
-DESCRIPTION="PulseAudio sound server"
-HOMEPAGE="http://www.pulseaudio.org/"
+NAME="pulseaudio"
+VERSION=2.1
+RELEASE=1
+CATEGORY="Audio"
+SUMMARY="PulseAudio sound server"
+DESCRIPTION="PulseAudio is a sound system for POSIX OSes, meaning that it is
+a proxy for your sound applications. It allows you to do advanced operations
+on your sound data as it passes between your application and your hardware.
+Things like transferring the audio to a different machine, changing the sample
+format or channel count and mixing several sounds into one are easily achieved
+using a sound server."
+HOMEPAGE="http://www.freedesktop.org/wiki/Software/PulseAudio"
 SRC_URI="http://freedesktop.org/software/pulseaudio/releases/${P}.tar.xz"
 
 PATCH_URI="
@@ -11,24 +21,33 @@ PATCH_URI="
 	1.1-cygwin-no-consolekit.patch
 	1.1-cygwin-no-rtp.patch
 	1.1-cygwin-waveout.patch
+	2.1-cygwin-pulsedsp.patch
+	2.1-libpulsecommon.patch
 "
 
 PKG_NAMES="${PN} libpulse0 libpulse-mainloop-glib0 libpulse-simple0 libpulse-devel vala-libpulse"
 pulseaudio_CONTENTS="--exclude=cygpulse-*.dll --exclude=cygpulsecommon-*.dll
                      --exclude=vala etc/ usr/bin/ usr/lib/pulse*/ usr/share/"
+
+libpulse0_SUMMARY="PulseAudio client library"
 libpulse0_CONTENTS="usr/bin/cygpulse-0.dll usr/bin/cygpulsecommon-*.dll"
+libpulse_mainloop_glib0_SUMMARY="PulseAudio GLib client library"
 libpulse_mainloop_glib0_CONTENTS="usr/bin/cygpulse-mainloop-glib-0.dll"
+libpulse_simple0_SUMMARY="PulseAudio simple client library"
 libpulse_simple0_CONTENTS="usr/bin/cygpulse-simple-0.dll"
+libpulse_devel_SUMMARY="PulseAudio client libraries (development)"
 libpulse_devel_CONTENTS="usr/include/ usr/lib/cmake/ usr/lib/lib* usr/lib/pkgconfig/"
+vala_libpulse_SUMMARY="PulseAudio client libraries (Vala bindings)"
 vala_libpulse_CONTENTS="usr/share/vala/"
 
+# fftw: equalizer adds latency, GUI requires PyQt
 CYGCONF_ARGS="
 	--libexecdir=/usr/lib
 	--disable-rpath
 	--disable-alsa
 	--disable-oss-output
-	--disable-oss-wrapper
 	--disable-solaris
+	--without-fftw
 	ac_cv_header_windows_h=no
 	ac_cv_header_winsock2_h=no
 	ac_cv_header_ws2tcpip_h=no
@@ -43,7 +62,9 @@ src_install() {
 	# make install removes the .la files, so auto-fixups won't happen
 	mv ${D}/usr/lib/pulse*/bin/*.dll ${D}/usr/bin/
 	rm -f ${D}/usr/lib/pulse*/modules/*.a
-	rm -f ${D}/usr/lib/*.la
+	rm -f ${D}/usr/lib/libpulsecore*
 
 	make_etc_defaults /etc/pulse
 }
+
+KEEP_LA_FILES="none"

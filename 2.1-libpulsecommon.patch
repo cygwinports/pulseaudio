@@ -1,0 +1,32 @@
+--- origsrc/pulseaudio-2.1/src/Makefile.am	2012-10-25 19:49:10.232991900 -0500
++++ src/pulseaudio-2.1/src/Makefile.am	2012-10-25 20:36:45.268181500 -0500
+@@ -530,7 +530,7 @@ echo_cancel_test_LDFLAGS = $(AM_LDFLAGS)
+ #         Common library          #
+ ###################################
+ 
+-pkglib_LTLIBRARIES = \
++lib_LTLIBRARIES = \
+ 		libpulsecommon-@PA_MAJORMINOR@.la
+ 
+ libpulsecommon_@PA_MAJORMINOR@_la_SOURCES = \
+@@ -694,7 +694,7 @@ pulseinclude_HEADERS = \
+ 		pulse/volume.h \
+ 		pulse/xmalloc.h
+ 
+-lib_LTLIBRARIES = \
++lib_LTLIBRARIES += \
+ 		libpulse.la \
+ 		libpulse-simple.la
+ 
+@@ -2056,10 +2056,9 @@ update-all: update-ffmpeg update-sbc upd
+ # Isn't libtool/autotools fun!
+ 
+ installlibLTLIBRARIES = install-libLTLIBRARIES
+-$(installlibLTLIBRARIES): install-pkglibLTLIBRARIES
+ 
+ installmodlibexecLTLIBRARIES = install-modlibexecLTLIBRARIES
+-$(installmodlibexecLTLIBRARIES): install-pkglibLTLIBRARIES
++$(installmodlibexecLTLIBRARIES): install-libLTLIBRARIES
+ 
+ installpadsplibLTLIBRARIES = install-padsplibLTLIBRARIES
+ $(installpadsplibLTLIBRARIES): install-libLTLIBRARIES
