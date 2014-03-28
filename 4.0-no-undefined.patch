@@ -1,14 +1,18 @@
---- origsrc/pulseaudio-1.1/src/Makefile.am	2011-10-20 07:54:16.000000000 -0500
-+++ src/pulseaudio-1.1/src/Makefile.am	2011-11-22 03:20:45.254582500 -0600
-@@ -52,14 +52,14 @@ SERVER_CFLAGS = -D__INCLUDED_FROM_PULSE_
+webrtc.cc is part of the echo-cancel module and depends on other functions
+therein, so it cannot be split out into a separate library
+
+--- origsrc/pulseaudio-4.0/src/Makefile.am	2014-03-27 14:16:28.232703400 -0500
++++ src/pulseaudio-4.0/src/Makefile.am	2014-03-27 15:00:51.405239200 -0500
+@@ -56,7 +56,7 @@ SERVER_CFLAGS = -D__INCLUDED_FROM_PULSE_
  
  AM_LIBADD = $(PTHREAD_LIBS) $(INTLLIBS)
  AM_LDADD = $(PTHREAD_LIBS) $(INTLLIBS)
 -AM_LDFLAGS = $(NODELETE_LDFLAGS)
 +AM_LDFLAGS = $(NODELETE_LDFLAGS) -no-undefined
  
- if STATIC_BINS
- BINLDFLAGS = -static
+ if HAVE_GCOV
+ AM_CFLAGS+=$(GCOV_CFLAGS)
+@@ -69,7 +69,7 @@ BINLDFLAGS = -static
  endif
  
  if OS_IS_WIN32
@@ -17,15 +21,21 @@
  WINSOCK_LIBS=-lwsock32 -lws2_32 -lwininet
  endif
  
-@@ -1838,18 +1838,10 @@ if HAVE_SPEEX
- module_echo_cancel_la_SOURCES += modules/echo-cancel/speex.c
- endif
- if HAVE_WEBRTC
--# The webrtc code is split off into a helper library to avoid having automake
--# link module-echo-cancel with C++ (which it does if there are any C++ deps,
--# even conditional ones).
+@@ -975,10 +975,6 @@ modlibexec_LTLIBRARIES = \
+ 		libprotocol-http.la \
+ 		libprotocol-native.la
+ 
+-if HAVE_WEBRTC
 -modlibexec_LTLIBRARIES += libwebrtc-util.la
+-endif
 -
+ if HAVE_ESOUND
+ modlibexec_LTLIBRARIES += \
+ 		libprotocol-esound.la
+@@ -1928,13 +1924,10 @@ if HAVE_WEBRTC
+ # link module-echo-cancel with C++ (which it does if there are any C++ deps,
+ # even conditional ones).
+ 
 -libwebrtc_util_la_SOURCES = modules/echo-cancel/webrtc.cc
 -libwebrtc_util_la_CXXFLAGS = $(AM_CXXFLAGS) $(SERVER_CFLAGS) $(WEBRTC_CFLAGS) -DHAVE_WEBRTC=1
 -libwebrtc_util_la_LIBADD = $(WEBRTC_LIBS)
@@ -35,7 +45,7 @@
  module_echo_cancel_la_CFLAGS += -DHAVE_WEBRTC=1
 -module_echo_cancel_la_LIBADD += libwebrtc-util.la
 +module_echo_cancel_la_CXXFLAGS = $(AM_CXXFLAGS) $(SERVER_CFLAGS) $(WEBRTC_CFLAGS) -DHAVE_WEBRTC=1
-+module_echo_cancel_la_LIBADD += $(WEBRTC_LIBS) libpulsecore-@PA_MAJORMINOR@.la libpulsecommon-@PA_MAJORMINOR@.la libpulse.la
++module_echo_cancel_la_LIBADD += $(WEBRTC_LIBS) $(MODULE_LIBADD)
  endif
  
  # RTP modules

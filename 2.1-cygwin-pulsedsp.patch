@@ -43,12 +43,14 @@
  int ioctl(int fd, int request, ...) {
  #else
  int ioctl(int fd, unsigned long request, ...) {
-@@ -2705,3 +2714,16 @@ int fclose(FILE *f) {
+@@ -2705,3 +2714,18 @@ int fclose(FILE *f) {
      LOAD_FCLOSE_FUNC();
      return _fclose(f);
  }
 +
 +#ifdef __CYGWIN__
++__attribute__((constructor)) void _init (void);
++
 +__attribute__((constructor))
 +void _init (void) {
 +  cygwin_internal (CW_HOOK, "_open64", open);

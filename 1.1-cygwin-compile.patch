@@ -1,25 +1,14 @@
 --- origsrc/pulseaudio-1.1/src/daemon/daemon-conf.c	2011-10-20 07:54:16.000000000 -0500
 +++ src/pulseaudio-1.1/src/daemon/daemon-conf.c	2011-11-20 14:59:40.601775700 -0600
 @@ -470,7 +470,7 @@ static int parse_nice_level(const char *
- }
  
- static int parse_rtprio(const char *filename, unsigned line, const char *section, const char *lvalue, const char *rvalue, void *data, void *userdata) {
+     pa_assert(state);
+
 -#ifdef OS_IS_WIN32
 +#ifdef HAVE_WAVEOUT
-     pa_log("[%s:%u] Realtime priority not available on win32.", filename, line);
+     pa_log("[%s:%u] Realtime priority not available on win32.", state->filename, state->lineno);
  #else
  # ifdef HAVE_SCHED_H
---- origsrc/pulseaudio-1.1/src/daemon/dumpmodules.c	2011-10-20 07:54:16.000000000 -0500
-+++ src/pulseaudio-1.1/src/daemon/dumpmodules.c	2011-11-20 14:59:40.603775800 -0600
-@@ -89,7 +89,7 @@ static void show_info(const char *name,
-     }
- }
- 
--#ifndef OS_IS_WIN32
-+#ifndef HAVE_WAVEOUT
- extern const lt_dlsymlist lt_preloaded_symbols[];
- #endif
- 
 --- origsrc/pulseaudio-1.1/src/daemon/main.c	2011-10-20 07:54:16.000000000 -0500
 +++ src/pulseaudio-1.1/src/daemon/main.c	2011-11-20 14:59:40.606776000 -0600
 @@ -993,7 +993,7 @@ int main(int argc, char *argv[]) {

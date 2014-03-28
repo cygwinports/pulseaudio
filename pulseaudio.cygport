@@ -1,5 +1,5 @@
 NAME="pulseaudio"
-VERSION=2.1
+VERSION=4.0
 RELEASE=1
 CATEGORY="Audio"
 SUMMARY="PulseAudio sound server"
@@ -10,11 +10,11 @@ Things like transferring the audio to a different machine, changing the sample
 format or channel count and mixing several sounds into one are easily achieved
 using a sound server."
 HOMEPAGE="http://www.freedesktop.org/wiki/Software/PulseAudio"
-SRC_URI="http://freedesktop.org/software/pulseaudio/releases/${P}.tar.xz"
-
+SRC_URI="http://freedesktop.org/software/pulseaudio/releases/${NAME}-${VERSION}.tar.xz"
 PATCH_URI="
-	1.1-libexecdir.patch
-	1.1-no-undefined.patch
+	http://pkgs.fedoraproject.org/cgit/pulseaudio.git/plain/pulseaudio-x11_device_manager.patch
+	http://pkgs.fedoraproject.org/cgit/pulseaudio.git/plain/pulseaudio-4.0-kde_autostart_phase.patch
+	4.0-no-undefined.patch
 	1.1-soext.patch
 	1.1-cygwin-compile.patch
 	1.1-cygwin-mutex.patch
@@ -22,49 +22,120 @@ PATCH_URI="
 	1.1-cygwin-no-rtp.patch
 	1.1-cygwin-waveout.patch
 	2.1-cygwin-pulsedsp.patch
-	2.1-libpulsecommon.patch
 "
 
-PKG_NAMES="${PN} libpulse0 libpulse-mainloop-glib0 libpulse-simple0 libpulse-devel vala-libpulse"
-pulseaudio_CONTENTS="--exclude=cygpulse-*.dll --exclude=cygpulsecommon-*.dll
-                     --exclude=vala etc/ usr/bin/ usr/lib/pulse*/ usr/share/"
-
+PKG_NAMES="${NAME} ${NAME}-equalizer ${NAME}-utils ${NAME}-esound-compat
+	${NAME}-module-x11 ${NAME}-module-gconf ${NAME}-module-zeroconf
+	libpulse0 libpulse-mainloop-glib0 libpulse-simple0
+	libpulse-devel libpulse-doc vala-libpulse"
+pulseaudio_CONTENTS="
+	--exclude=cygpulse-*.dll
+	--exclude=cygpulsecommon-*.dll
+	--exclude=start-pulseaudio-*
+	--exclude=*avahi-wrap*
+	--exclude=*protocol-esound*
+	--exclude=module-equalizer*
+	--exclude=module-esound*
+	--exclude=module-gconf*
+	--exclude=module-x11-*
+	--exclude=module-zeroconf-*
+	--exclude=html
+	--exclude=vala
+	--exclude=xdg
+	etc/ usr/bin/*.dll usr/bin/pulseaudio.exe usr/lib/pulse-*/
+	usr/share/doc/ usr/share/locale/ usr/share/man/man1/pulseaudio.*
+	usr/share/man/man5/"
+pulseaudio_equalizer_SUMMARY="PulseAudio Equalizer"
+pulseaudio_equalizer_CONTENTS="
+	usr/bin/qpaeq
+	usr/lib/pulse-*/modules/module-equalizer-sink.dll
+	usr/share/applications/qpaeq.desktop"
+pulseaudio_module_x11_SUMMARY="X11 support modules for PulseAudio"
+pulseaudio_module_x11_REQUIRES="${NAME}-utils"
+pulseaudio_module_x11_CONTENTS="
+	etc/xdg/autostart/
+	usr/bin/start-pulseaudio-*
+	usr/lib/pulse-*/modules/module-x11-*
+	usr/share/man/man1/start-pulseaudio-*"
+pulseaudio_module_gconf_SUMMARY="GConf support modules for PulseAudio"
+pulseaudio_module_gconf_CONTENTS="
+	usr/lib/pulse-*/modules/module-gconf*
+	usr/libexec/pulse/gconf-*"
+pulseaudio_module_zeroconf_SUMMARY="ZeroConf support modules for PulseAudio"
+pulseaudio_module_zeroconf_CONTENTS="
+	usr/bin/cygavahi-wrap.dll
+	usr/lib/pulse-*/modules/module-zeroconf-*"
+pulseaudio_esound_compat_REQUIRES=${NAME}
+pulseaudio_esound_compat_SUMMARY="ESounD compatibility for PulseAudio"
+pulseaudio_esound_compat_CONTENTS="
+	usr/bin/*protocol-esound*
+	usr/bin/esd*
+	usr/lib/pulse-*/modules/*esound*
+	usr/share/man/man1/esd*"
+pulseaudio_utils_CONTENTS="usr/bin/pa* usr/lib/pulseaudio/*pulsedsp* usr/share/man/man1/pa*"
+libpulse0_CATEGORY="Libs"
 libpulse0_SUMMARY="PulseAudio client library"
 libpulse0_CONTENTS="usr/bin/cygpulse-0.dll usr/bin/cygpulsecommon-*.dll"
+libpulse_mainloop_glib0_CATEGORY="Libs"
 libpulse_mainloop_glib0_SUMMARY="PulseAudio GLib client library"
 libpulse_mainloop_glib0_CONTENTS="usr/bin/cygpulse-mainloop-glib-0.dll"
+libpulse_simple0_CATEGORY="Libs"
 libpulse_simple0_SUMMARY="PulseAudio simple client library"
 libpulse_simple0_CONTENTS="usr/bin/cygpulse-simple-0.dll"
+libpulse_devel_CATEGORY="Libs"
 libpulse_devel_SUMMARY="PulseAudio client libraries (development)"
-libpulse_devel_CONTENTS="usr/include/ usr/lib/cmake/ usr/lib/lib* usr/lib/pkgconfig/"
+libpulse_devel_CONTENTS="usr/include/ usr/lib/cmake/ usr/lib/lib* usr/lib/pulseaudio/libpulsecommon* usr/lib/pkgconfig/"
+libpulse_doc_CATEGORY="Doc"
+libpulse_doc_SUMMARY="PulseAudio client API documentation"
+libpulse_doc_CONTENTS="usr/share/doc/${NAME}/html/"
+vala_libpulse_CATEGORY="Libs"
 vala_libpulse_SUMMARY="PulseAudio client libraries (Vala bindings)"
 vala_libpulse_CONTENTS="usr/share/vala/"
 
-# fftw: equalizer adds latency, GUI requires PyQt
-CYGCONF_ARGS="
-	--libexecdir=/usr/lib
-	--disable-rpath
-	--disable-alsa
-	--disable-oss-output
-	--disable-solaris
-	--without-fftw
-	ac_cv_header_windows_h=no
-	ac_cv_header_winsock2_h=no
-	ac_cv_header_ws2tcpip_h=no
-"
+src_compile() {
+	cd ${S}
+	cygautoreconf
+	cd ${B}
+	cygconf \
+		--disable-rpath \
+		--disable-alsa \
+		--disable-oss-output \
+		--disable-solaris \
+		--without-caps \
+		ac_cv_header_windows_h=no \
+		ac_cv_header_winsock2_h=no \
+		ac_cv_header_ws2tcpip_h=no
+
+	cygmake
+
+	pushd ${B}/doxygen
+	sed -i -e "s|\.\./|${S}/|g" doxygen.conf
+	sed -i -e "/version\.h/s|${S}|..|g" doxygen.conf
+	cygmake doxygen
+	popd
+}
 
 src_install() {
 	cd ${B}
 	cyginstall
 
+	make_desktop_entry qpaeq "PulseAudio Equalizer" "multimedia-volume-control" "AudioVideo;Audio;Mixer"
+
+	# obsoleted by x11_device_manager.patch
+	rm -f ${D}/etc/xdg/autostart/pulseaudio-kde.desktop
+
+	# replace esd
 	dosym esdcompat /usr/bin/esd
+	echo ".so esdcompat.1" >> ${D}/usr/share/man/man1/esd.1
 
 	# make install removes the .la files, so auto-fixups won't happen
-	mv ${D}/usr/lib/pulse*/bin/*.dll ${D}/usr/bin/
-	rm -f ${D}/usr/lib/pulse*/modules/*.a
+	mv ${D}/usr/lib/pulse-*/bin/*.dll ${D}/usr/bin/
+	rm -f ${D}/usr/lib/pulse-*/modules/*.a
 	rm -f ${D}/usr/lib/libpulsecore*
 
 	make_etc_defaults /etc/pulse
+
+	dodoc ${B}/doxygen/html
 }
 
 KEEP_LA_FILES="none"
