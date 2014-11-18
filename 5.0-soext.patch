@@ -1,0 +1,13 @@
+--- origsrc/pulseaudio-5.0/configure.ac	2014-11-18 01:39:57.640417300 -0600
++++ src/pulseaudio-5.0/configure.ac	2014-11-18 02:45:41.966283100 -0600
+@@ -1242,8 +1242,8 @@ AX_DEFINE_DIR(PA_BINARY, PA_BINARY, [Loc
+ PACTL_BINARY=${bindir}/pactl${EXEEXT}
+ AX_DEFINE_DIR(PACTL_BINARY, PACTL_BINARY, [Location of pactl binary])
+ 
+-AC_SUBST(PA_SOEXT, [.so])
+-AC_DEFINE(PA_SOEXT, [".so"], [Shared object extension])
++AC_SUBST(PA_SOEXT, [$shrext_cmds])
++AC_DEFINE(PA_SOEXT, ["$shrext_cmds"], [Shared object extension])
+ 
+ AC_SUBST(pulseconfdir, ["${sysconfdir}/pulse"])
+ AX_DEFINE_DIR(PA_DEFAULT_CONFIG_DIR, pulseconfdir, [Location of configuration files])

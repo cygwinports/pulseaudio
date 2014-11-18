@@ -1,0 +1,12 @@
+--- origsrc/pulseaudio-5.0/configure.ac	2014-02-15 02:33:32.000000000 -0600
++++ src/pulseaudio-5.0/configure.ac	2014-11-18 00:11:42.886068900 -0600
+@@ -99,9 +99,6 @@ PKG_PROG_PKG_CONFIG
+ if test "x$enable_nls" != "xno"; then
+ IT_PROG_INTLTOOL([0.35.0])
+ 
+-AM_GNU_GETTEXT_VERSION([0.18.1])
+-AM_GNU_GETTEXT([external])
+-
+ GETTEXT_PACKAGE=pulseaudio
+ AC_SUBST([GETTEXT_PACKAGE])
+ AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE],["$GETTEXT_PACKAGE"],[Gettext package])

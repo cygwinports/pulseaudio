@@ -1,0 +1,34 @@
+--- origsrc/pulseaudio-5.0/src/daemon/daemon-conf.c	2014-01-23 12:57:55.000000000 -0600
++++ src/pulseaudio-5.0/src/daemon/daemon-conf.c	2014-11-17 22:24:51.903977500 -0600
+@@ -472,7 +472,7 @@ static int parse_rtprio(pa_config_parser
+ 
+     pa_assert(state);
+ 
+-#ifdef OS_IS_WIN32
++#ifdef HAVE_WAVEOUT
+     pa_log("[%s:%u] Realtime priority not available on win32.", state->filename, state->lineno);
+ #else
+ # ifdef HAVE_SCHED_H
+--- origsrc/pulseaudio-5.0/src/daemon/main.c	2014-02-25 08:01:58.000000000 -0600
++++ src/pulseaudio-5.0/src/daemon/main.c	2014-11-17 22:22:37.354391900 -0600
+@@ -1008,7 +1008,7 @@ int main(int argc, char *argv[]) {
+         pa_log_info(_("Dude, your kernel stinks! The chef's recommendation today is Linux with high-resolution timers enabled!"));
+ 
+     if (conf->lock_memory) {
+-#if defined(HAVE_SYS_MMAN_H) && !defined(__ANDROID__)
++#if defined(HAVE_SYS_MMAN_H) && !defined(__ANDROID__) && !defined(__CYGWIN__)
+         if (mlockall(MCL_FUTURE) < 0)
+             pa_log_warn("mlockall() failed: %s", pa_cstrerror(errno));
+         else
+--- origsrc/pulseaudio-5.0/src/tests/once-test.c	2014-02-25 06:28:35.000000000 -0600
++++ src/pulseaudio-5.0/src/tests/once-test.c	2014-11-17 22:24:35.781930300 -0600
+@@ -30,6 +30,9 @@
+ #include <sys/cpuset.h>
+ #endif
+ #endif
++#ifndef _POSIX_BARRIERS
++#undef HAVE_PTHREAD
++#endif
+ #endif
+ 
+ #include <check.h>
