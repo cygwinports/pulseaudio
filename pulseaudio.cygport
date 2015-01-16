@@ -1,6 +1,6 @@
 NAME="pulseaudio"
 VERSION=5.0
-RELEASE=1
+RELEASE=2
 CATEGORY="Audio"
 SUMMARY="PulseAudio sound server"
 DESCRIPTION="PulseAudio is a sound system for POSIX OSes, meaning that it is
@@ -22,6 +22,7 @@ PATCH_URI="
 	1.1-cygwin-no-rtp.patch
 	1.1-cygwin-waveout.patch
 	2.1-cygwin-pulsedsp.patch
+	5.0-cygwin-proc.patch
 	5.0-intltool-gettext.patch
 "
 
