@@ -53,12 +53,12 @@
 +
 +__attribute__((constructor))
 +void _init (void) {
-+  cygwin_internal (CW_HOOK, "_open64", open);
++  cygwin_internal (CW_HOOK, "open", open);
 +  cygwin_internal (CW_HOOK, "ioctl", ioctl);
 +  cygwin_internal (CW_HOOK, "close", close);
 +  cygwin_internal (CW_HOOK, "access", access);
-+  cygwin_internal (CW_HOOK, "_stat64", stat);
-+  cygwin_internal (CW_HOOK, "_fopen64", fopen);
++  cygwin_internal (CW_HOOK, "stat", stat);
++  cygwin_internal (CW_HOOK, "fopen", fopen);
 +  cygwin_internal (CW_HOOK, "fclose", fclose);
 +}
 +#endif

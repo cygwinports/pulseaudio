@@ -1,6 +1,6 @@
 NAME="pulseaudio"
-VERSION=5.0
-RELEASE=2
+VERSION=7.1
+RELEASE=1
 CATEGORY="Audio"
 SUMMARY="PulseAudio sound server"
 DESCRIPTION="PulseAudio is a sound system for POSIX OSes, meaning that it is
@@ -12,18 +12,18 @@ using a sound server."
 HOMEPAGE="http://www.freedesktop.org/wiki/Software/PulseAudio"
 SRC_URI="http://freedesktop.org/software/pulseaudio/releases/${NAME}-${VERSION}.tar.xz"
 PATCH_URI="
-	http://pkgs.fedoraproject.org/cgit/pulseaudio.git/plain/pulseaudio-x11_device_manager.patch
-	http://pkgs.fedoraproject.org/cgit/pulseaudio.git/plain/pulseaudio-4.0-kde_autostart_phase.patch
+	http://pkgs.fedoraproject.org/cgit/pulseaudio.git/plain/pulseaudio-7.0-localedir.patch?h=f23
 	4.0-no-undefined.patch
 	5.0-soext.patch
 	5.0-cygwin-compile.patch
 	1.1-cygwin-mutex.patch
 	1.1-cygwin-no-consolekit.patch
-	1.1-cygwin-no-rtp.patch
+	7.1-cygwin-no-rtp.patch
 	1.1-cygwin-waveout.patch
 	2.1-cygwin-pulsedsp.patch
-	5.0-cygwin-proc.patch
+	7.1-cygwin-proc.patch
 	5.0-intltool-gettext.patch
+	7.1-cygwin-config.patch
 "
 
 PKG_NAMES="${NAME} ${NAME}-equalizer ${NAME}-utils ${NAME}-esound-compat
@@ -74,7 +74,13 @@ pulseaudio_esound_compat_CONTENTS="
 	usr/bin/esd*
 	usr/lib/pulse-*/modules/*esound*
 	usr/share/man/man1/esd*"
-pulseaudio_utils_CONTENTS="usr/bin/pa* usr/lib/pulseaudio/*pulsedsp* usr/share/man/man1/pa*"
+pulseaudio_utils_CONTENTS="
+	usr/bin/pa*
+	usr/lib/pulseaudio/*pulsedsp*
+	usr/share/man/man1/pa*
+	usr/share/bash-completion/
+	usr/share/zsh/
+"
 libpulse0_CATEGORY="Libs"
 libpulse0_SUMMARY="PulseAudio client library"
 libpulse0_CONTENTS="usr/bin/cygpulse-0.dll usr/bin/cygpulsecommon-*.dll"

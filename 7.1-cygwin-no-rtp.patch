@@ -1,0 +1,29 @@
+--- origsrc/pulseaudio-7.1/src/Makefile.am	2015-10-30 07:14:56.000000000 -0500
++++ src/pulseaudio-7.1/src/Makefile.am	2015-12-29 12:47:20.952269400 -0600
+@@ -1076,7 +1076,7 @@ modlibexec_LTLIBRARIES += \
+ endif
+ 
+ # We need to emulate sendmsg/recvmsg to support this on Win32
+-if !OS_IS_WIN32
++if !HAVE_WAVEOUT
+ modlibexec_LTLIBRARIES += \
+ 		librtp.la
+ endif
+@@ -1201,7 +1201,7 @@ modlibexec_LTLIBRARIES += \
+ endif
+ 
+ # See comment at librtp.la above
+-if !OS_IS_WIN32
++if !HAVE_WAVEOUT
+ modlibexec_LTLIBRARIES += \
+ 		module-rtp-send.la \
+ 		module-rtp-recv.la
+@@ -1425,7 +1425,7 @@ endif
+ 
+ # RAOP depends on RTP, and we don't support RTP on Windows, see comment at
+ # librtp.la above.
+-if !OS_IS_WIN32
++if !HAVE_WAVEOUT
+ if HAVE_OPENSSL
+ modlibexec_LTLIBRARIES += \
+ 		libraop.la \

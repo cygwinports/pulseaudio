@@ -1,0 +1,36 @@
+--- origsrc/pulseaudio-7.1/src/daemon/daemon-conf.c	2015-12-29 13:05:37.755131000 -0600
++++ src/pulseaudio-7.1/src/daemon/daemon-conf.c	2015-12-29 14:12:23.570945700 -0600
+@@ -63,7 +63,7 @@ static const pa_daemon_conf default_conf
+     .daemonize = false,
+     .fail = true,
+     .high_priority = true,
+-    .nice_level = -11,
++    .nice_level = -16,
+     .realtime_scheduling = true,
+     .realtime_priority = 5,  /* Half of JACK's default rtprio */
+     .disallow_module_loading = false,
+--- origsrc/pulseaudio-7.1/src/daemon/daemon.conf.in	2015-09-09 23:51:41.000000000 -0500
++++ src/pulseaudio-7.1/src/daemon/daemon.conf.in	2015-12-29 14:12:34.024543600 -0600
+@@ -33,7 +33,7 @@ ifelse(@HAVE_DBUS@, 1, [dnl
+ ; cpu-limit = no
+ 
+ ; high-priority = yes
+-; nice-level = -11
++; nice-level = -16
+ 
+ ; realtime-scheduling = yes
+ ; realtime-priority = 5
+--- origsrc/pulseaudio-7.1/src/daemon/default.pa.in	2015-09-09 23:51:41.000000000 -0500
++++ src/pulseaudio-7.1/src/daemon/default.pa.in	2015-12-29 14:09:51.824014100 -0600
+@@ -58,7 +58,10 @@ ifelse(@HAVE_OSS_OUTPUT@, 1, [dnl
+ #load-module module-oss-mmap device="/dev/dsp" sink_name=output source_name=input
+ ])dnl
+ ifelse(@HAVE_WAVEOUT@, 1, [dnl
+-load-module module-waveout sink_name=output source_name=input
++load-module module-waveout sink_name=output record=0
++.nofail
++load-module module-waveout source_name=input playback=0
++.fail
+ ])dnl
+ #load-module module-null-sink
+ ifelse(@HAVE_MKFIFO@, 1, [dnl
