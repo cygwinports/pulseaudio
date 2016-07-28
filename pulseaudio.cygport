@@ -1,5 +1,5 @@
 NAME="pulseaudio"
-VERSION=7.1
+VERSION=9.0
 RELEASE=1
 CATEGORY="Audio"
 SUMMARY="PulseAudio sound server"
@@ -12,7 +12,8 @@ using a sound server."
 HOMEPAGE="http://www.freedesktop.org/wiki/Software/PulseAudio"
 SRC_URI="http://freedesktop.org/software/pulseaudio/releases/${NAME}-${VERSION}.tar.xz"
 PATCH_URI="
-	http://pkgs.fedoraproject.org/cgit/pulseaudio.git/plain/pulseaudio-7.0-localedir.patch?h=f23
+	http://pkgs.fedoraproject.org/cgit/rpms/pulseaudio.git/plain/pulseaudio-autostart.patch
+	http://pkgs.fedoraproject.org/cgit/rpms/pulseaudio.git/plain/pulseaudio-9.0-disable_flat_volumes.patch
 	4.0-no-undefined.patch
 	5.0-soext.patch
 	5.0-cygwin-compile.patch
@@ -137,9 +138,9 @@ src_install() {
 	echo ".so esdcompat.1" >> ${D}/usr/share/man/man1/esd.1
 
 	# make install removes the .la files, so auto-fixups won't happen
-	mv ${D}/usr/lib/pulse-*/bin/*.dll ${D}/usr/bin/
+	mv ${D}/usr/lib/bin/cygpulsecore*.dll ${D}/usr/lib/pulse-*/bin/*.dll ${D}/usr/bin/
 	rm -f ${D}/usr/lib/pulse-*/modules/*.a
-	rm -f ${D}/usr/lib/libpulsecore*
+	rm -f ${D}/usr/lib/pulseaudio/libpulsecore*
 
 	make_etc_defaults /etc/pulse
 

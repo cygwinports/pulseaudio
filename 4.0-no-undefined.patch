@@ -3,12 +3,12 @@ therein, so it cannot be split out into a separate library
 
 --- origsrc/pulseaudio-4.0/src/Makefile.am	2014-03-27 14:16:28.232703400 -0500
 +++ src/pulseaudio-4.0/src/Makefile.am	2014-03-27 15:00:51.405239200 -0500
-@@ -56,7 +56,7 @@ SERVER_CFLAGS = -D__INCLUDED_FROM_PULSE_
- 
- AM_LIBADD = $(PTHREAD_LIBS) $(INTLLIBS)
+@@ -57,7 +57,7 @@ SERVER_CFLAGS = -D__INCLUDED_FROM_PULSE_
  AM_LDADD = $(PTHREAD_LIBS) $(INTLLIBS)
--AM_LDFLAGS = $(NODELETE_LDFLAGS)
-+AM_LDFLAGS = $(NODELETE_LDFLAGS) -no-undefined
+ AM_LDFLAGS =
+ # Should only be applied to libraries.
+-AM_LIBLDFLAGS = $(NODELETE_LDFLAGS)
++AM_LIBLDFLAGS = $(NODELETE_LDFLAGS) -no-undefined
  
  if HAVE_GCOV
  AM_CFLAGS+=$(GCOV_CFLAGS)

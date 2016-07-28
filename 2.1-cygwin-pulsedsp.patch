@@ -4,8 +4,8 @@
  libpulsedsp_la_SOURCES = utils/padsp.c
  libpulsedsp_la_CFLAGS = $(AM_CFLAGS)
  libpulsedsp_la_LIBADD = $(AM_LIBADD) libpulse.la libpulsecommon-@PA_MAJORMINOR@.la
--libpulsedsp_la_LDFLAGS = $(AM_LDFLAGS) -avoid-version -disable-static
-+libpulsedsp_la_LDFLAGS = $(AM_LDFLAGS) -module -avoid-version -no-undefined -disable-static
+-libpulsedsp_la_LDFLAGS = $(AM_LDFLAGS) $(AM_LIBLDFLAGS) -avoid-version -disable-static
++libpulsedsp_la_LDFLAGS = $(AM_LDFLAGS) $(AM_LIBLDFLAGS) -module -avoid-version -no-undefined -disable-static
  
  ###################################
  #      Daemon core library        #
