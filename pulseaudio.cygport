@@ -1,5 +1,5 @@
 NAME="pulseaudio"
-VERSION=9.0
+VERSION=10.0
 RELEASE=1
 CATEGORY="Audio"
 SUMMARY="PulseAudio sound server"
