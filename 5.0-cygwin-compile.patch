@@ -20,15 +20,3 @@
          if (mlockall(MCL_FUTURE) < 0)
              pa_log_warn("mlockall() failed: %s", pa_cstrerror(errno));
          else
---- origsrc/pulseaudio-5.0/src/tests/once-test.c	2014-02-25 06:28:35.000000000 -0600
-+++ src/pulseaudio-5.0/src/tests/once-test.c	2014-11-17 22:24:35.781930300 -0600
-@@ -30,6 +30,9 @@
- #include <sys/cpuset.h>
- #endif
- #endif
-+#ifndef _POSIX_BARRIERS
-+#undef HAVE_PTHREAD
-+#endif
- #endif
- 
- #include <check.h>

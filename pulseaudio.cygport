@@ -1,5 +1,5 @@
 NAME="pulseaudio"
-VERSION=10.0
+VERSION=11.1
 RELEASE=1
 CATEGORY="Audio"
 SUMMARY="PulseAudio sound server"
@@ -14,6 +14,7 @@ SRC_URI="http://freedesktop.org/software/pulseaudio/releases/${NAME}-${VERSION}.
 PATCH_URI="
 	http://pkgs.fedoraproject.org/cgit/rpms/pulseaudio.git/plain/pulseaudio-autostart.patch
 	http://pkgs.fedoraproject.org/cgit/rpms/pulseaudio.git/plain/pulseaudio-9.0-disable_flat_volumes.patch
+	http://pkgs.fedoraproject.org/cgit/rpms/pulseaudio.git/plain/0084-sink-source-Don-t-finish-move-if-unlink-happens-afte.patch
 	4.0-no-undefined.patch
 	5.0-soext.patch
 	5.0-cygwin-compile.patch
@@ -146,5 +147,3 @@ src_install() {
 
 	dodoc ${B}/doxygen/html
 }
-
-KEEP_LA_FILES="none"
